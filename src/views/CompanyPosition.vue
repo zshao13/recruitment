@@ -8,6 +8,7 @@
             </template>
             <div class="list-pagination">
                 <el-pagination
+                    :current-page.sync="params.pageNo"
                     background
                     layout="prev, pager, next"
                     :total="total"
@@ -55,7 +56,7 @@ export default {
         },
         onAction (row) {
             this.$router.push({
-                path: '/positionEdit',
+                path: '/positionDetail',
                 query: {
                     id: row.p_id
                 }

@@ -1,6 +1,6 @@
 <template>
-    <el-container>
-        <el-header class="header">
+    <el-container class="bg">
+        <el-header :class="{header: true, nobg: $route.path === '/index'}">
             <el-row type="flex" class="header-cont" justify="space-between" align="middle">
                 <el-col :span="4">易招聘</el-col>
                 <el-col class="header-cont-right" :span="20">
@@ -38,7 +38,7 @@
                 </el-col>
             </el-row>
         </el-header>
-        <el-main class="app-main">
+        <el-main :class="{'app-main': true,  nobg: $route.path === '/index'}">
             <div class="app-container">
                 <router-view />
             </div>
@@ -102,6 +102,7 @@ export default {
         }
     },
     async created () {
+        console.log(this.$route)
         console.log(this.userInfo)
     },
     methods: {
@@ -157,7 +158,7 @@ export default {
             console.log(e)
             if (e === 'exit') {
                 this.$store.dispatch('app/clear', 'ALL')
-                this.$router.push('/')
+                this.$router.push('/index')
             }
         },
         onLogin () {
@@ -222,6 +223,15 @@ export default {
 }
 .app-container {
     // background-color: darkblue;
+    // background-image: url('../../assets/bg.jpg');
+}
+.bg {
+    background-image: url('../../assets/bg3.jpg') ;
+    background-repeat: no-repeat;   //不重复
+    background-size: 100% 100%;     // 满屏
+}
+.nobg {
+    background: none;
 }
 .login-form {
     padding-right: 60px;

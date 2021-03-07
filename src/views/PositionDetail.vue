@@ -2,48 +2,119 @@
     <div>
         <div class="page-title">职位详情</div>
         <div class="detail">
-            <h1>基础架构高级项目经理</h1>
+            <h1>{{form.name || '--'}}</h1>
             <div class="subtitle">
-                <span>上海</span>
-                <el-divider direction="vertical"></el-divider>
-                <span>算法</span>
-                <el-divider direction="vertical"></el-divider>
-                <span>社招</span>
+                <template v-for="(item, i) in form.tags">
+                    <span :key="i">{{item}}</span>
+                    <el-divider v-if="i < form.tags.length - 1" :key="i" direction="vertical"></el-divider>
+                </template>
             </div>
             <div>
                 <h2>职位描述</h2>
                 <pre class="textContent">
-                    1、计算机或相关专业背景；
-                    2、5 年以上互联网企业工作经历，对技术有一定程度了解，能够参与到项目的深度讨论中；
-                    3、有基础服务方向（包括但不限于数据库、缓存、容器云等）的团队或项目管理经验；
-                    4、优秀的沟通能力，能够带领项目讨论，并引导参与方达成有效共识；
-                    5、数据驱动的分析以及决策能力。
+                    {{form.remark}}
                 </pre>
             </div>
             <div>
                 <h2>职位要求</h2>
                 <pre class="textContent">
-                    1、代表基础架构团队，与多业务团队沟通，全流程负责基础架构项目的顺利实施与交付；
-                    2、对基础架构的主要项目整体进度负责，全程参与并领导项目的规划、依赖识别、实施进度追踪、交付等活动；在多项目并行条件下，管理基础架构团队内项目优先级以及团队中远期规划的产品列表；
-                    3、与业务团队紧密沟通，及时收集反馈业务团队痛点，并负责管理业务团队预期；
-                    4、负责与基础架构团队各方向负责人协作，完善内部项目管理流程。
+                    {{form.demand}}
                 </pre>
             </div>
-            <div class="send-btn">投递</div>
-            <div class="send-btn">编辑</div>
-            <div class="send-btn">查看简历</div>
-            <div class="send-btn">关闭职位</div>
+            <div class="send-btn" v-if="userInfo.u_type === '1' && form.status === '1'" @click="onSend">投递</div>
+            <div class="send-btn gary" v-if="userInfo.u_type === '1' && form.status === '0'">该职位已关闭</div>
+            <div class="send-btn" v-if="userInfo.u_type === '2'" @click="onEdit">编辑</div>
+            <div class="send-btn" v-if="userInfo.u_type === '2'" @click="onCheck">查看简历</div>
+            <div class="send-btn" v-if="userInfo.u_type === '2' && form.status === '1'" @click="onChangeStaus('0')">关闭职位</div>
+            <div class="send-btn" v-if="userInfo.u_type === '2' && form.status === '0'" @click="onChangeStaus('1')">开启职位</div>
             <div class="clear"></div>
         </div>
     </div>
 </template>
 
 <script>
-// import {} from ''
+import { getPositionInfo, setPositionStatus, sendPosition } from '../api/api'
 export default {
     name: 'PositionDetail',
     data () {
         return {
+            form: {
+                name: '',
+                tags: [],
+                remark: '',
+                demand: '',
+                status: ''
+            },
+            id: ''
+        }
+    },
+    computed: {
+        userInfo () {
+            return this.$store.state.app.user
+        }
+    },
+    mounted () {
+        const { query } = this.$route
+        if (query.id) {
+            this.id = query.id
+            this.initData()
+        }
+    },
+    methods: {
+        async initData () {
+            const postData = {
+                id: this.id
+            }
+            const res = await getPositionInfo(postData)
+            if (res.success) {
+                this.form.name = res.data.p_name
+                this.form.tags = JSON.parse(res.data.p_tags)
+                this.form.remark = res.data.p_remark
+                this.form.demand = res.data.p_demand
+                this.form.status = res.data.status
+            }
+        },
+        onEdit () {
+            this.$router.push({
+                path: '/positionEdit',
+                query: {
+                    id: this.id
+                }
+            })
+        },
+        async onSend () {
+            const postData = {
+                userId: this.userInfo.u_id,
+                positionId: this.id
+            }
+            const res = await sendPosition(postData)
+            if (res.success) {
+                if (res.data) {
+                    this.$message.error(res.data)
+                } else {
+                    this.$message.success('投递成功！')
+                }
+            }
+        },
+        async onChangeStaus (status) {
+            const postData = {
+                status: status,
+                id: this.id
+            }
+            const res = await setPositionStatus(postData)
+            if (res.success) {
+                this.$message.success('操作成功！')
+                this.initData()
+            }
+        },
+        onCheck () {
+            console.log()
+            this.$router.push({
+                path: '/resumeList',
+                query: {
+                    id: this.id
+                }
+            })
         }
     }
 }
@@ -58,5 +129,8 @@ export default {
 .textContent {
     white-space: pre-line;
     line-height: 2em;
+}
+.gary {
+    opacity: .6;
 }
 </style>

@@ -1,17 +1,15 @@
 <template>
-    <div class="position-item">
-        <h3 class="title">张书豪</h3>
+    <div class="position-item" @click="onClick">
+        <h3 class="title">{{itemInfo.base_info.name}}</h3>
         <div class="subtitle">
-            <span>17729323343</span>
+            <span>{{itemInfo.base_info.phone}}</span>
             <el-divider direction="vertical"></el-divider>
-            <span>郑州商学院</span>
+            <span>{{itemInfo.edu_info.school}}</span>
             <el-divider direction="vertical"></el-divider>
-            <span>666的</span>
+            <span>{{itemInfo.edu_info.education}}</span>
         </div>
-        <p class="desc">1、代表基础架构团队，与多业务团队沟通，全流程负责基础架构项目的顺利实施与交付；
-            2、对基础架构的主要项目整体进度负责，全程参与并领导项目的规划、依赖识别、实施进度追踪、交付等活动；在多项目并行条件下，管理基础架构团队内项目优先级以及团队中远期规划的产品列表；
-            3、与业务团队紧密沟通，及时收集反馈业务团队痛点，并负责管理业务团队预期；
-            4、负责与基础架构团队各方向负责人协作，完善内部项目管理流程。
+        <p class="desc">
+            {{itemInfo.work_info[0].remark}}
         </p>
     </div>
 </template>
@@ -20,8 +18,23 @@
 
 export default {
     name: 'ResumeItem',
+    props: ['info'],
     data () {
         return {
+        }
+    },
+    computed: {
+        itemInfo () {
+            const item = this.info
+            item.base_info = JSON.parse(item.base_info)
+            item.edu_info = JSON.parse(item.edu_info)
+            item.work_info = JSON.parse(item.work_info)
+            return item
+        }
+    },
+    methods: {
+        onClick () {
+            this.$emit('action')
         }
     }
 }
@@ -32,6 +45,8 @@ export default {
     display: inline-block;
     padding: 10px;
     cursor: pointer;
+    width: 100%;
+    box-sizing: border-box;
     &:hover {
         border-radius: 3px;
         background: #fff;

@@ -69,3 +69,73 @@ export function getPositionInfo (res) {
         }
     })
 }
+
+export function getPositionAll (res) {
+    return request({
+        url: '/position/all',
+        method: 'POST',
+        data: {
+            ...res
+        }
+    })
+}
+
+export function setPositionStatus (res) {
+    return request({
+        url: '/position/status',
+        method: 'POST',
+        data: {
+            ...res
+        }
+    })
+}
+
+export function sendPosition (res) {
+    return request({
+        url: '/position/send',
+        method: 'POST',
+        data: {
+            ...res
+        }
+    })
+}
+
+export function getSendList (res) {
+    return request({
+        url: '/personal/sendList',
+        method: 'POST',
+        data: {
+            ...res
+        }
+    })
+}
+
+export function getTalentsList (res) {
+    return request({
+        url: '/personal/list',
+        method: 'POST',
+        data: {
+            ...res
+        }
+    })
+}
+
+export function setStatus (res) {
+    return request({
+        url: '/resume/status',
+        method: 'POST',
+        data: {
+            ...res
+        }
+    })
+}
+
+export function getTalentsListForP (res) {
+    return request({
+        url: '/personal/listforp',
+        method: 'POST',
+        data: {
+            ...res
+        }
+    })
+}

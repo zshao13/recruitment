@@ -94,15 +94,15 @@
                     <el-divider v-if="index !== objectList.length - 1" :key="item.key"></el-divider>
                 </template>
             </div>
-            <div class="send-btn" v-if="userInfo.u_type === '2'">通过</div>
-            <div class="send-btn" v-if="userInfo.u_type === '2'">未通过</div>
+            <div class="send-btn" v-if="userInfo.u_type === '2'" @click="onDeal('1')">通过</div>
+            <div class="send-btn" v-if="userInfo.u_type === '2'" @click="onDeal('0')">未通过</div>
             <div class="clear"></div>
         </div>
     </div>
 </template>
 
 <script>
-import { getResume } from '../api/api'
+import { getResume, setStatus } from '../api/api'
 export default {
     name: 'Resume',
     data () {
@@ -110,7 +110,8 @@ export default {
             baseForm: {},
             educationInfo: {},
             workList: [],
-            objectList: []
+            objectList: [],
+            id: ''
         }
     },
     filters: {
@@ -138,12 +139,19 @@ export default {
         }
     },
     mounted () {
+        const { query } = this.$route
+        if (query.id) {
+            this.id = query.id
+            this.pId = query.pid
+        } else {
+            this.id = this.userInfo.u_id
+        }
         this.initData()
     },
     methods: {
         async initData () {
             const postData = {
-                id: this.userInfo.u_id
+                id: this.id
             }
             const res = await getResume(postData)
             if (res.success) {
@@ -158,6 +166,17 @@ export default {
         },
         onEdit () {
             this.$router.push('/resumeEdit')
+        },
+        async onDeal (v) {
+            const postData = {
+                status: v,
+                userId: this.id,
+                pId: this.pId
+            }
+            const res = await setStatus(postData)
+            if (res.success) {
+                this.$message.success('操作成功！')
+            }
         }
     }
 }

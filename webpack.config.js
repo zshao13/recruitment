@@ -122,8 +122,8 @@ const __webpackConfig__ = {
     plugins: [
         new HtmlWebpackPlugin({
             filename: 'index.html',
-            template: './public/index.html',
-            favicon: './public/favicon.ico'
+            template: './public/index.html'
+            // favicon: './public/favicon.ico'
         }),
         new VueLoaderPlugin(),
         new ProgressBarPlugin({

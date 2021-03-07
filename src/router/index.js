@@ -11,6 +11,11 @@ export default new Router({
             name: 'Home',
             children: [
                 {
+                    path: '/index',
+                    name: 'Index',
+                    component: () => import(/* webpackChunkName: "main" */ '@/views/Index.vue')
+                },
+                {
                     path: '/position',
                     name: 'Position',
                     component: () => import(/* webpackChunkName: "main" */ '@/views/Position.vue')

@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="page-title">职位列表</div>
-        <el-row :gutter="20">
+        <!-- <el-row :gutter="20">
             <el-col :span="6">
                 <div class="filter">
                     <span class="title">职位</span>
@@ -29,24 +29,77 @@
                     </div>
                 </div>
             </el-col>
-        </el-row>
+        </el-row> -->
+        <div class="content">
+            <h2 class="list-title">开启的新职位{{total}}</h2>
+            <template v-for="item in list">
+                <PositionItem :key="item.p_id" :info="item" @action="onAction(item)"></PositionItem>
+            </template>
+            <div class="list-pagination">
+                <el-pagination
+                    :current-page.sync="params.pageNo"
+                    background
+                    layout="prev, pager, next"
+                    :total="total"
+                ></el-pagination>
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
 import PositionItem from '../components/PositionItem'
+import { getPositionAll } from '../api/api'
 export default {
     name: 'Position',
     components: { PositionItem },
     data () {
         return {
-            checkList: []
+            checkList: [],
+            list: [],
+            total: 0,
+            params: {
+                pageNo: 1,
+                pageSize: 10
+            }
+        }
+    },
+    mounted () {
+        this.initData()
+    },
+    methods: {
+        onAction (row) {
+            this.$router.push({
+                path: '/positionDetail',
+                query: {
+                    id: row.p_id
+                }
+            })
+        },
+        async initData () {
+            const postData = {
+                ...this.params
+            }
+            const res = await getPositionAll(postData)
+            if (res.success) {
+                this.list = res.data.data
+                this.total = res.data.count
+            }
         }
     }
 }
 </script>
 
 <style lang="less" scoped>
+.content {
+    background-color: #fff;
+    border-radius: 6px;
+    padding: 20px 30px;
+    .list-pagination {
+        margin-top: 30px;
+        text-align: right;
+    }
+}
 .filter, .list {
     background-color: #fff;
     border-radius: 6px;
